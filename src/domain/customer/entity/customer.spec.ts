@@ -1,3 +1,6 @@
+import EnviaConsoleLogHandler from "../event/handler/envia-console-log-handler";
+import EnviaConsoleLog1Handler from "../event/handler/envia-console-log1-handler";
+import EnviaConsoleLog2Handler from "../event/handler/envia-console-log2-handler";
 import Address from "../value-object/address";
 import Customer from "./customer";
 
@@ -60,4 +63,37 @@ describe("Customer unit tests", () => {
     customer.addRewardPoints(10);
     expect(customer.rewardPoints).toBe(20);
   });
+
+
+  it("should notify created customer handler", () => {
+
+    const customer = new Customer("1", "Customer 1");
+
+    const eventHandler1 = new EnviaConsoleLog1Handler();
+    const eventHandler2 = new EnviaConsoleLog2Handler();
+
+    const spyEventHandler1 = jest.spyOn(eventHandler1, "handle");
+    const spyEventHandler2 = jest.spyOn(eventHandler2, "handle");
+
+    expect(spyEventHandler1).toHaveBeenCalled();
+    expect(spyEventHandler2).toHaveBeenCalled();
+  });
+
+  it("should notify address changed handler", () => {
+
+    const customer = new Customer("1", "Customer 1");
+    const address = new Address("Street 1", 123, "13330-250", "São Paulo");
+    customer.Address = address;
+
+    const address2 = new Address("Street 1", 123, "13330-250", "São Paulo");
+
+    customer.changeAddress(address2);
+
+    const eventHandler = new EnviaConsoleLogHandler();
+
+    const spyEventHandler = jest.spyOn(eventHandler, "handle");
+
+    expect(spyEventHandler).toHaveBeenCalled();
+  });
+
 });
