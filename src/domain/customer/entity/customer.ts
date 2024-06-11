@@ -110,5 +110,6 @@ export default class Customer {
 
   set Address(address: Address) {
     this._address = address;
+    this.addressChanged();
   }
 }
