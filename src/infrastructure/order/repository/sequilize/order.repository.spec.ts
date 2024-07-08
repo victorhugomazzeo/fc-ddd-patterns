@@ -171,7 +171,7 @@ describe("Order repository test", () => {
       1
     );
 
-    const order = new Order("456", "123", [orderItem]);
+    let order = new Order("456", "123", [orderItem]);
 
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
@@ -182,29 +182,22 @@ describe("Order repository test", () => {
 
     await customerRepository.create(customer2);
 
+    const orderItem2 = new OrderItem(
+      "2",
+      product.name,
+      product.price,
+      product.id,
+      1
+    );
+
+    order = new Order("456", "123", [orderItem,orderItem2]);
+
     order.changeCustomer('789');
 
    await orderRepository.update(order);
 
-    const orderModel = await OrderModel.findOne({
-      where: { id: "456" },
-      include: [OrderItemModel],
-    });
-   
-    expect(orderModel.toJSON()).toStrictEqual({
-      id: "456",
-      customer_id: order.customerId,
-      total: order.total(),
-      items: [
-        {
-          id: "1",
-          order_id: "456",
-          product_id: "123",
-          name: "Product 1",
-          price: 10,
-          quantity: 1,
-        }
-      ],
-    });
+   const orderResult = await orderRepository.find(order.id);
+
+    expect(order).toStrictEqual(orderResult);
   });
 });
